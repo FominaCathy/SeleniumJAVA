@@ -1,52 +1,45 @@
-package TestStandGB;
+package TestStandSelenide;
 
+
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.WebDriverRunner;
 import jdk.jfr.Description;
-import org.junit.jupiter.api.*;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class TestStandGB {
-    private static WebDriver chromeDriver;
+public class TestStandGBSld {
+    static WebDriver chromeDriver;
     private static String login = "Student-3";
+    private static String userName = "3 Student";
     private static String password = "56856478f0";
     private static String txtError = "401";
-
     private static String urlBase = "https://test-stand.gb.ru/login";
-    private static ChromeOptions options;
-    private static WebDriverWait wait;
 
-    @BeforeAll
-    public static void init() {
-        System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\chromedriver.exe");
-        options = new ChromeOptions();
-        //  options.addArguments("--headless");
-    }
 
     @BeforeEach
     void openWin() {
-        chromeDriver = new ChromeDriver(options);
-        chromeDriver.manage().window().maximize();
-        wait = new WebDriverWait(chromeDriver, Duration.ofSeconds(15));
+        Selenide.open(urlBase);
+        chromeDriver = WebDriverRunner.getWebDriver();
     }
+
 
     @Test
     @Description("Отображение ошибки при авторизации без логина и пароля")
     void invalidAuthorizeEmptyData() {
-        chromeDriver.get(urlBase);
-        LoginPage loginPage = new LoginPage(chromeDriver, wait);
+        LoginPageSld loginPage = Selenide.page(LoginPageSld.class);//new TestStandGB.LoginPage(chromeDriver, wait);
         loginPage.login();
         loginPage.checkButtonVisibility();
         assertTrue(loginPage.getMsgError().contains(txtError));
@@ -56,12 +49,12 @@ public class TestStandGB {
      * валидная авторизация
      */
     private void validAuthorize() {
-        chromeDriver.get(urlBase);
-        LoginPage loginPage = new LoginPage(chromeDriver, wait);
+        LoginPageSld loginPage = Selenide.page(LoginPageSld.class);
         loginPage.login(login, password);
         loginPage.checkButtonInvisibility();
 
-        MainPage mainPage = new MainPage(chromeDriver, wait);
+        MainPageSld mainPage = Selenide.page(MainPageSld.class);
+
         assertEquals(("Hello, " + login), mainPage.getGreeting());
     }
 
@@ -71,9 +64,9 @@ public class TestStandGB {
      * @param myGroup - название группы
      * @return объект класса MainPage
      */
-    private MainPage addGroup(String myGroup) {
+    private MainPageSld addGroup(String myGroup) {
         validAuthorize();
-        MainPage mainPage = new MainPage(chromeDriver, wait);
+        MainPageSld mainPage = Selenide.page(MainPageSld.class);
         mainPage.successAddNewDroup(myGroup);
 
         //скриншот
@@ -91,7 +84,7 @@ public class TestStandGB {
     void activeAndInactiveGroup() {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String myGroup = "myGroup" + timestamp.getTime();
-        MainPage mainPage = addGroup(myGroup);
+        MainPageSld mainPage = addGroup(myGroup);
 
         assertEquals("active", mainPage.getStatusRow(myGroup));
 
@@ -105,9 +98,9 @@ public class TestStandGB {
     /**
      * "Добавление студентов в группу с помощью иконки ‘+’"
      */
-    private MainPage addStudyInGroup(String myGroup, String countStudy) {
+    private MainPageSld addStudyInGroup(String myGroup, String countStudy) {
 
-        MainPage mainPage = addGroup(myGroup);
+        MainPageSld mainPage = addGroup(myGroup);
         //TODO подумать как сделать правильно
         mainPage.successAddStudy(myGroup, countStudy);
         return mainPage;
@@ -120,9 +113,10 @@ public class TestStandGB {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String myGroup = "myGroup" + timestamp.getTime();
         String countGroup = "5";
-        MainPage mainPage = addStudyInGroup(myGroup, countGroup);
+        MainPageSld mainPage = addStudyInGroup(myGroup, countGroup);
+        StudyTable studyTable = mainPage.openListStudy(myGroup);
 
-        assertEquals(Integer.parseInt(countGroup), mainPage.getCountStudy(myGroup));
+        assertEquals(Integer.parseInt(countGroup), studyTable.getCountStudy());
     }
 
     @Test
@@ -132,21 +126,31 @@ public class TestStandGB {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String myGroup = "myGroup" + timestamp.getTime();
         String countGroup = "5";
-        MainPage mainPage = addStudyInGroup(myGroup, countGroup);
-        //TODO как сделать правильно
-        mainPage.openListStudy(myGroup);
+        MainPageSld mainPage = addStudyInGroup(myGroup, countGroup);
+        StudyTable studyTable = mainPage.openListStudy(myGroup);
 
-        assertEquals("active", mainPage.getStatusFirsStudy());
+        assertEquals("active", studyTable.getStatusFirsStudy());
 
-        mainPage.successDeleteFirstStudy();
-        assertEquals("block", mainPage.getStatusFirsStudy());
+        studyTable.successDeleteFirstStudy();
+        assertEquals("block", studyTable.getStatusFirsStudy());
 
-        mainPage.successRestoreFirstStudy();
-        assertEquals("active", mainPage.getStatusFirsStudy());
+        studyTable.successRestoreFirstStudy();
+        assertEquals("active", studyTable.getStatusFirsStudy());
+    }
+
+    @Test
+    void checkName() {
+        validAuthorize();
+        MainPageSld mainPage = Selenide.page(MainPageSld.class);
+        mainPage.clickProfile();
+        ProfilePage profilePage = Selenide.page(ProfilePage.class);
+
+        assertEquals(userName, profilePage.getFullName());
+        assertEquals(userName, profilePage.getAdditionName());
     }
 
     @AfterEach
     void closeWin() {
-        chromeDriver.quit();
+        WebDriverRunner.closeWebDriver();
     }
 }
