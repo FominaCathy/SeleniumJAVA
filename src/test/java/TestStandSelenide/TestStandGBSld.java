@@ -101,7 +101,6 @@ public class TestStandGBSld {
     private MainPageSld addStudyInGroup(String myGroup, String countStudy) {
 
         MainPageSld mainPage = addGroup(myGroup);
-        //TODO подумать как сделать правильно
         mainPage.successAddStudy(myGroup, countStudy);
         return mainPage;
     }

@@ -38,7 +38,7 @@ public class TableRow {
                 .until(x -> x.findElement(By.xpath(buttonText)));
     }
 
-    //    //TODO переименовать
+
     public WebElement getBtnStudyGroup() {
         return webElement.findElement(By.xpath("./td[4]/button/span[@class='mdc-button__label']"));
     }

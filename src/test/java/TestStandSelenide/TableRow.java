@@ -28,10 +28,10 @@ public class TableRow {
 
     public void waitRestore(String text) {
         String buttonText = String.format("./td/button[text()='%s']", text);
-        row.$x(buttonText).should(Condition.visible, Duration.ofSeconds(10)).click();
+        row.$x(buttonText).should(Condition.text(text), Duration.ofSeconds(10));
     }
 
-    //    //TODO переименовать
+
     public SelenideElement getBtnStudyGroup() {
         return row.$x("./td[4]/button/span[@class='mdc-button__label']").should(Condition.visible);
     }

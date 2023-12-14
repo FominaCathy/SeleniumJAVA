@@ -108,7 +108,6 @@ public class TestStandGB {
     private MainPage addStudyInGroup(String myGroup, String countStudy) {
 
         MainPage mainPage = addGroup(myGroup);
-        //TODO подумать как сделать правильно
         mainPage.successAddStudy(myGroup, countStudy);
         return mainPage;
     }
@@ -133,7 +132,7 @@ public class TestStandGB {
         String myGroup = "myGroup" + timestamp.getTime();
         String countGroup = "5";
         MainPage mainPage = addStudyInGroup(myGroup, countGroup);
-        //TODO как сделать правильно
+
         mainPage.openListStudy(myGroup);
 
         assertEquals("active", mainPage.getStatusFirsStudy());
