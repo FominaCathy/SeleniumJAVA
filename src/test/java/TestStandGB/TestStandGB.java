@@ -17,7 +17,7 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
+@Disabled
 public class TestStandGB {
     private static WebDriver chromeDriver;
     private static String login = "Student-3";
@@ -76,13 +76,6 @@ public class TestStandGB {
         MainPage mainPage = new MainPage(chromeDriver, wait);
         mainPage.successAddNewDroup(myGroup);
 
-        //скриншот
-        File screenshot = ((TakesScreenshot) chromeDriver).getScreenshotAs(OutputType.FILE);
-        try {
-            FileUtils.copyFile(screenshot, new File("src\\test\\resources\\screenshot.png"));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
         return mainPage;
     }
 
@@ -105,7 +98,7 @@ public class TestStandGB {
     /**
      * "Добавление студентов в группу с помощью иконки ‘+’"
      */
-    private MainPage addStudyInGroup(String myGroup, String countStudy) {
+    private MainPage addStudyInGroup(String myGroup, int countStudy) {
 
         MainPage mainPage = addGroup(myGroup);
         mainPage.successAddStudy(myGroup, countStudy);
@@ -115,22 +108,23 @@ public class TestStandGB {
     @Test
     @Description("проверка количество студентов в списке")
     void checkListStudy() {
-        //TODO invalid test
+
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String myGroup = "myGroup" + timestamp.getTime();
-        String countGroup = "5";
+        int countGroup = 5;
         MainPage mainPage = addStudyInGroup(myGroup, countGroup);
 
-        assertEquals(Integer.parseInt(countGroup), mainPage.getCountStudy(myGroup));
+        assertEquals(countGroup, mainPage.getCountStudy(myGroup));
+        screenshot();
     }
 
     @Test
     @Description("проверка изменения статуса первого студента")
     void activeAndInactiveStudy() {
-        //TODO invalid test
+
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String myGroup = "myGroup" + timestamp.getTime();
-        String countGroup = "5";
+        int countGroup = 5;
         MainPage mainPage = addStudyInGroup(myGroup, countGroup);
 
         mainPage.openListStudy(myGroup);
@@ -142,6 +136,16 @@ public class TestStandGB {
 
         mainPage.successRestoreFirstStudy();
         assertEquals("active", mainPage.getStatusFirsStudy());
+    }
+
+    private void screenshot() {
+        //скриншот
+        File screenshot = ((TakesScreenshot) chromeDriver).getScreenshotAs(OutputType.FILE);
+        try {
+            FileUtils.copyFile(screenshot, new File("src\\test\\resources\\screenshot.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @AfterEach

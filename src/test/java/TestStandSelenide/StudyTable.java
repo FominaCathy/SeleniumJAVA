@@ -12,8 +12,8 @@ import static com.codeborne.selenide.Selenide.$$;
 
 public class StudyTable {
 
-    SelenideElement rootList = $("div.mdc-data-table");
-    ElementsCollection listStudy = $$("table[aria-label='User list'] tbody tr");
+    private final SelenideElement rootList = $("div.mdc-data-table");
+    private final ElementsCollection listStudy = $$("table[aria-label='User list'] tbody tr");
 
     public void checkTableVisible() {
         rootList.should(Condition.visible);

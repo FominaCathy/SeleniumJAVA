@@ -7,7 +7,7 @@ import java.time.Duration;
 
 
 public class TableRow {
-    SelenideElement row;
+    private final SelenideElement row;
 
     public TableRow(SelenideElement row) {
         this.row = row;

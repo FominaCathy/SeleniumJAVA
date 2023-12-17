@@ -113,11 +113,11 @@ public class MainPage {
      * @param myGroup    название группы
      * @param countStudy кол-во студентов
      */
-    private void addStudy(String myGroup, String countStudy) {
+    private void addStudy(String myGroup, int countStudy) {
         getRow(myGroup).getBtnStudyGroup().click();
         //
         wait.until(ExpectedConditions.visibilityOf(fieldCountLogins));
-        fieldCountLogins.sendKeys(countStudy);
+        fieldCountLogins.sendKeys(Integer.toString(countStudy));
         wait.until(ExpectedConditions.visibilityOf(btnCreatingLogins));
         btnCreatingLogins.click();
         wait.until(ExpectedConditions.visibilityOf(btnCloseLogins));
@@ -130,9 +130,9 @@ public class MainPage {
      * @param myGroup    название группы
      * @param countStudy кол-во студентов
      */
-    public void successAddStudy(String myGroup, String countStudy) {
+    public void successAddStudy(String myGroup, int countStudy) {
         addStudy(myGroup, countStudy);
-        wait.until(ExpectedConditions.textToBePresentInElement(getRow(myGroup).getBtnStudyGroup(), countStudy));
+        wait.until(ExpectedConditions.textToBePresentInElement(getRow(myGroup).getBtnStudyGroup(), Integer.toString(countStudy)));
     }
 
     /**

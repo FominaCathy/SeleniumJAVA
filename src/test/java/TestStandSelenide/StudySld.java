@@ -7,7 +7,7 @@ import java.time.Duration;
 
 
 public class StudySld {
-    SelenideElement studyRow;
+    private final SelenideElement studyRow;
 
     public StudySld(SelenideElement studyRow) {
         this.studyRow = studyRow;

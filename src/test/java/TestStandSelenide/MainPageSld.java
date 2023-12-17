@@ -9,19 +9,19 @@ public class MainPageSld {
     //region WebElements
     private final StudyTable studyTable = Selenide.page(StudyTable.class);
 
-    private SelenideElement helloField = $("li.mdc-menu-surface--anchor");
-    private SelenideElement createBtn = $("button#create-btn");
-    private SelenideElement fieldGroupName = $("form#update-item input");
-    private SelenideElement btnSave = $("form#update-item button[type='submit']");
-    private SelenideElement btnClose = $(".form-modal-header button");
-    private SelenideElement table = $("div.mdc-data-table");
-    private ElementsCollection listRow = $$("table[aria-label='Tutors list'] tbody tr");
-    private ElementsCollection listStudy = $$("table[aria-label='User list'] tbody tr");
-    private SelenideElement fieldCountLogins = $("form#generate-logins input");
-    private SelenideElement btnCreatingLogins = $("form#generate-logins div.submit button");
-    private SelenideElement btnCloseLogins = $x("//*[@id='generateStudentsForm-title']/../button");
+    private final SelenideElement helloField = $("li.mdc-menu-surface--anchor");
+    private final SelenideElement createBtn = $("button#create-btn");
+    private final SelenideElement fieldGroupName = $("form#update-item input");
+    private final SelenideElement btnSave = $("form#update-item button[type='submit']");
+    private final SelenideElement btnClose = $(".form-modal-header button");
+    private final SelenideElement table = $("div.mdc-data-table");
+    private final ElementsCollection listRow = $$("table[aria-label='Tutors list'] tbody tr");
+    private final ElementsCollection listStudy = $$("table[aria-label='User list'] tbody tr");
+    private final SelenideElement fieldCountLogins = $("form#generate-logins input");
+    private final SelenideElement btnCreatingLogins = $("form#generate-logins div.submit button");
+    private final SelenideElement btnCloseLogins = $x("//*[@id='generateStudentsForm-title']/../button");
     //@FindBy(xpath = "//ul[@class='mdc-deprecated-list']//span[text()='Profile']" )
-    private SelenideElement menuProfile = $x("//nav//li[contains(@class,'mdc-menu-surface--anchor')]//span[text()='Profile']");
+    private final SelenideElement menuProfile = $x("//nav//li[contains(@class,'mdc-menu-surface--anchor')]//span[text()='Profile']");
 
     //endregion WebElements
 
@@ -88,10 +88,10 @@ public class MainPageSld {
      * @param myGroup    название группу
      * @param countStudy кол-во студентов
      */
-    private void addStudy(String myGroup, String countStudy) {
+    private void addStudy(String myGroup, int countStudy) {
         getRow(myGroup).getBtnStudyGroup().click();
         //
-        fieldCountLogins.should(Condition.visible).setValue(countStudy);
+        fieldCountLogins.should(Condition.visible).setValue(Integer.toString(countStudy));
         btnCreatingLogins.should(Condition.visible).click();
         btnCloseLogins.should(Condition.visible).click();
     }
@@ -102,9 +102,9 @@ public class MainPageSld {
      * @param myGroup
      * @param countStudy
      */
-    public void successAddStudy(String myGroup, String countStudy) {
+    public void successAddStudy(String myGroup, int countStudy) {
         addStudy(myGroup, countStudy);
-        getRow(myGroup).getBtnStudyGroup().should(Condition.text(countStudy));
+        getRow(myGroup).getBtnStudyGroup().should(Condition.text(Integer.toString(countStudy)));
     }
 
     public StudyTable openListStudy(String myGroup) {
