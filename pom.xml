@@ -15,11 +15,11 @@
     </properties>
 
     <dependencies>
-        <!--        <dependency>-->
-        <!--            <groupId>org.seleniumhq.selenium</groupId>-->
-        <!--            <artifactId>selenium-java</artifactId>-->
-        <!--            <version>4.15.0</version>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.15.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -48,11 +48,11 @@
             <version>7.0.4</version>
         </dependency>
 
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-selenide</artifactId>
-            <version>2.25.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.qameta.allure</groupId>-->
+<!--            <artifactId>allure-selenide</artifactId>-->
+<!--            <version>2.25.0</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>io.qameta.allure</groupId>
@@ -76,7 +76,7 @@
                 <version>3.2.2</version>
                 <configuration>
                     <testFailureIgnore>false</testFailureIgnore>
-<!--                    <argLine>-->
+                    <!--                    <argLine>-->
                     <!--                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/1.8.10/aspectjweaver-1.8.10.jar"-->
                     <!--                    </argLine>-->
                     <!--                    <systemProperties>-->

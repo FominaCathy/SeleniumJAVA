@@ -3,65 +3,77 @@ package TestStandGB;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 @Disabled
 public class TestStandGB {
-    private static WebDriver chromeDriver;
+    private static WebDriver driver;
     private static String login = "Student-3";
     private static String password = "56856478f0";
     private static String txtError = "401";
 
     private static String urlBase = "https://test-stand.gb.ru/login";
     private static ChromeOptions options;
+
     private static WebDriverWait wait;
 
     @BeforeAll
-    public static void init() {
-        System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\chromedriver.exe");
+    public static void init()  {
+        HashMap<String, Object> capability = new HashMap<>();
+        capability.put("enableVNC", true);
+        capability.put("enableLog", true);
         options = new ChromeOptions();
-        //  options.addArguments("--headless");
+        options.setCapability("selenoid:options", capability);
     }
 
     @BeforeEach
-    void openWin() {
-        chromeDriver = new ChromeDriver(options);
-        chromeDriver.manage().window().maximize();
-        wait = new WebDriverWait(chromeDriver, Duration.ofSeconds(15));
+    void openWin() throws MalformedURLException {
+        driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), options);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
 
     @Test
     @Description("Отображение ошибки при авторизации без логина и пароля")
     void invalidAuthorizeEmptyData() {
-        chromeDriver.get(urlBase);
-        LoginPage loginPage = new LoginPage(chromeDriver, wait);
+        driver.get(urlBase);
+        LoginPage loginPage = new LoginPage(driver, wait);
         loginPage.login();
         loginPage.checkButtonVisibility();
         assertTrue(loginPage.getMsgError().contains(txtError));
+    }
+
+    @Test
+    void checkValidAuthorize(){
+        validAuthorize();
+
     }
 
     /**
      * валидная авторизация
      */
     private void validAuthorize() {
-        chromeDriver.get(urlBase);
-        LoginPage loginPage = new LoginPage(chromeDriver, wait);
+        driver.get(urlBase);
+        LoginPage loginPage = new LoginPage(driver, wait);
         loginPage.login(login, password);
         loginPage.checkButtonInvisibility();
 
-        MainPage mainPage = new MainPage(chromeDriver, wait);
+        MainPage mainPage = new MainPage(driver, wait);
         assertEquals(("Hello, " + login), mainPage.getGreeting());
     }
 
@@ -73,7 +85,7 @@ public class TestStandGB {
      */
     private MainPage addGroup(String myGroup) {
         validAuthorize();
-        MainPage mainPage = new MainPage(chromeDriver, wait);
+        MainPage mainPage = new MainPage(driver, wait);
         mainPage.successAddNewDroup(myGroup);
 
         return mainPage;
@@ -115,7 +127,7 @@ public class TestStandGB {
         MainPage mainPage = addStudyInGroup(myGroup, countGroup);
 
         assertEquals(countGroup, mainPage.getCountStudy(myGroup));
-        screenshot();
+//        screenshot();
     }
 
     @Test
@@ -140,7 +152,7 @@ public class TestStandGB {
 
     private void screenshot() {
         //скриншот
-        File screenshot = ((TakesScreenshot) chromeDriver).getScreenshotAs(OutputType.FILE);
+        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         try {
             FileUtils.copyFile(screenshot, new File("src\\test\\resources\\screenshot.png"));
         } catch (IOException e) {
@@ -150,6 +162,6 @@ public class TestStandGB {
 
     @AfterEach
     void closeWin() {
-        chromeDriver.quit();
+        driver.quit();
     }
 }
